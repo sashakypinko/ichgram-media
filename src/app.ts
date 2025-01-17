@@ -1,8 +1,8 @@
 import lightKiteServer from 'light-kite';
-import {connectDB} from './src/core/config/db';
+import {connectDB} from './core/config/db';
 
 import 'dotenv/config';
-import modules from './src/modules';
+import modules from './modules';
 
 connectDB();
 
