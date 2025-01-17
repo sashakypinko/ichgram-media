@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  media:
+    build:
+      context: .
+    expose:
+      - "3004"
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - ichgram-network
+
+networks:
+  ichgram-network:
+    driver: bridge
+    external: true
