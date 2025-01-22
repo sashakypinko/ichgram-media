@@ -4,8 +4,16 @@ services:
   media:
     build:
       context: .
+    environment:
+        PORT: 3000
+        DB_URI: ${DB_URI}
+        DB_NANE: ${DB_NANE}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+    env_file: 
+      - .env
     expose:
-      - "3004"
+      - "3000"
     volumes:
       - ./uploads:/app/uploads
     networks:
