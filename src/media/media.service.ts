@@ -14,6 +14,10 @@ class MediaService {
   }
 
   async store(file: Express.Multer.File): Promise<IMedia> {
+    if (!this.validateFileExtension(file)) {
+      throw new BadRequestException('Unsupported file extension!');
+    }
+
     const {filename, originalname: originalName, mimetype, size} = file;
     const media = new Media({filename, originalName, mimetype, size});
     await media.save();
@@ -38,7 +42,7 @@ class MediaService {
   async getStreamData(id: string, size: keyof typeof Size): Promise<StreamData> {
     const media = await this.getById(id);
 
-    if (!media) { 
+    if (!media) {
       throw new NotFoundException('Media not found');
     }
 
@@ -47,7 +51,7 @@ class MediaService {
     if (!fs.existsSync(filePath)) {
       throw new NotFoundException('File not found on the server');
     }
-    
+
     let contentLength = media.size.toString();
     let contentType = media.mimetype;
     let stream: Sharp | ReadStream = fs.createReadStream(filePath);
@@ -65,20 +69,25 @@ class MediaService {
       stream = await resizeImage(filePath, Size[size]);
       const metadata = await stream.metadata();
       contentLength = metadata.size?.toString() || '';
-      
+
       if (isVideo(media.mimetype)) {
         stream.on('end', () => {
           deleteTempFile(filePath);
-        })
+        });
       }
     }
-    
+
     return {
       stream,
       contentType,
       contentLength,
       media,
-    }
+    };
+  }
+
+  private validateFileExtension(file: Express.Multer.File) {
+    console.log({ file });
+    return true;
   }
 }
 
